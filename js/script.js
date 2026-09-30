@@ -1,0 +1,649 @@
+// ======================================
+// VARIÁVEIS DO JOGO
+// ======================================
+
+let faseAtual = 1;
+let estrelas = 0;
+let baloes = 0;
+let velas = 0;
+
+
+// ======================================
+// ELEMENTOS
+// ======================================
+
+const progressText =
+    document.getElementById("progressText");
+
+const progressFill =
+    document.getElementById("progressFill");
+
+const telaFinal =
+    document.getElementById("finalScreen");
+
+
+// ======================================
+// INICIAR JOGO
+// ======================================
+
+window.addEventListener("load", function () {
+
+    criarEstrelas();
+
+    atualizarProgresso();
+
+});
+
+
+// ======================================
+// MOSTRAR FASE
+// ======================================
+
+function mostrarFase(numero) {
+
+    document
+        .querySelectorAll(".game-section")
+        .forEach(function (fase) {
+
+            fase.classList.remove("active");
+
+        });
+
+
+    const fase =
+        document.getElementById("phase" + numero);
+
+
+    if (fase) {
+
+        fase.classList.add("active");
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+}
+
+
+// ======================================
+// ATUALIZAR PROGRESSO
+// ======================================
+
+function atualizarProgresso() {
+
+    if (faseAtual === 1) {
+
+        progressText.innerHTML =
+            "Progresso: 0/3";
+
+        progressFill.style.width =
+            "0%";
+
+    }
+
+    else if (faseAtual === 2) {
+
+        progressText.innerHTML =
+            "Progresso: 1/3";
+
+        progressFill.style.width =
+            "33%";
+
+    }
+
+    else if (faseAtual === 3) {
+
+        progressText.innerHTML =
+            "Progresso: 2/3";
+
+        progressFill.style.width =
+            "66%";
+
+    }
+
+    else {
+
+        progressText.innerHTML =
+            "Progresso: 3/3";
+
+        progressFill.style.width =
+            "100%";
+
+    }
+
+}
+
+
+// ======================================
+// FASE 1 - ESTRELAS
+// ======================================
+
+function criarEstrelas() {
+
+    const starGame =
+        document.getElementById("starGame");
+
+
+    for (let i = 0; i < 10; i++) {
+
+        const estrela =
+            document.createElement("button");
+
+
+        estrela.innerHTML = "⭐";
+
+        estrela.classList.add(
+            "game-star"
+        );
+
+
+        estrela.style.left =
+            Math.random() * 80 + 5 + "%";
+
+
+        estrela.style.top =
+            Math.random() * 75 + 5 + "%";
+
+
+        // Mouse chegando perto
+        estrela.addEventListener(
+            "mouseenter",
+            function () {
+
+                fugirEstrela(estrela);
+
+            }
+        );
+
+
+        // Celular
+        estrela.addEventListener(
+            "touchstart",
+            function (evento) {
+
+                evento.preventDefault();
+
+                fugirEstrela(estrela);
+
+            }
+        );
+
+
+        // Clique
+        estrela.addEventListener(
+            "click",
+            function () {
+
+                coletarEstrela(estrela);
+
+            }
+        );
+
+
+        starGame.appendChild(
+            estrela
+        );
+
+    }
+
+}
+
+
+// ======================================
+// ESTRELA FUGINDO DEVAGAR
+// ======================================
+
+function fugirEstrela(estrela) {
+
+    if (
+        estrela.classList.contains("collected")
+    ) {
+
+        return;
+
+    }
+
+
+    const area =
+        document.getElementById("starGame");
+
+
+    const areaWidth =
+        area.clientWidth;
+
+
+    const areaHeight =
+        area.clientHeight;
+
+
+    const estrelaWidth =
+        estrela.offsetWidth;
+
+
+    const estrelaHeight =
+        estrela.offsetHeight;
+
+
+    const posicaoAtualX =
+        parseFloat(estrela.style.left) || 0;
+
+
+    const posicaoAtualY =
+        parseFloat(estrela.style.top) || 0;
+
+
+    // Movimento pequeno
+    const movimentoX =
+        (Math.random() * 120) - 60;
+
+
+    const movimentoY =
+        (Math.random() * 90) - 45;
+
+
+    let novaPosicaoX =
+        posicaoAtualX +
+        movimentoX;
+
+
+    let novaPosicaoY =
+        posicaoAtualY +
+        movimentoY;
+
+
+    // Impede sair da área
+    novaPosicaoX =
+        Math.max(
+            5,
+            Math.min(
+                novaPosicaoX,
+                areaWidth - estrelaWidth - 5
+            )
+        );
+
+
+    novaPosicaoY =
+        Math.max(
+            5,
+            Math.min(
+                novaPosicaoY,
+                areaHeight - estrelaHeight - 5
+            )
+        );
+
+
+    estrela.style.left =
+        novaPosicaoX + "px";
+
+
+    estrela.style.top =
+        novaPosicaoY + "px";
+
+
+    estrela.style.transform =
+        "scale(1.15) rotate(15deg)";
+
+
+    setTimeout(function () {
+
+        estrela.style.transform =
+            "";
+
+    }, 300);
+
+}
+
+
+// ======================================
+// COLETAR ESTRELA
+// ======================================
+
+function coletarEstrela(estrela) {
+
+    if (
+        estrela.classList.contains(
+            "collected"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    estrela.classList.add(
+        "collected"
+    );
+
+
+    estrelas++;
+
+
+    document.getElementById(
+        "starCount"
+    ).innerHTML =
+        "Estrelas encontradas: " +
+        estrelas +
+        "/10";
+
+
+    if (estrelas === 10) {
+
+        setTimeout(function () {
+
+            irParaProximaFase();
+
+        }, 700);
+
+    }
+
+}
+
+
+// ======================================
+// PRÓXIMA FASE
+// ======================================
+
+function irParaProximaFase() {
+
+    faseAtual++;
+
+    mostrarFase(
+        faseAtual
+    );
+
+    atualizarProgresso();
+
+}
+
+
+// ======================================
+// FASE 2 - BALÕES
+// ======================================
+
+function popGameBalloon(balloon) {
+
+    if (
+        balloon.classList.contains(
+            "popped"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    balloon.classList.add(
+        "popped"
+    );
+
+
+    baloes++;
+
+
+    document.getElementById(
+        "balloonCount"
+    ).innerHTML =
+        "Balões estourados: " +
+        baloes +
+        "/5";
+
+
+    if (baloes === 5) {
+
+        setTimeout(function () {
+
+            irParaProximaFase();
+
+        }, 700);
+
+    }
+
+}
+
+
+// ======================================
+// FASE 3 - VELAS
+// ======================================
+
+function blowCandle() {
+
+    const chamas =
+        document.querySelectorAll(
+            ".flame"
+        );
+
+
+    if (velas >= 3) {
+
+        return;
+
+    }
+
+
+    chamas[velas].classList.add(
+        "off"
+    );
+
+
+    velas++;
+
+
+    document.getElementById(
+        "candleCount"
+    ).innerHTML =
+        "Velas apagadas: " +
+        velas +
+        "/3";
+
+
+    if (velas === 3) {
+
+        document.getElementById(
+            "cakeHint"
+        ).innerHTML =
+            "🎉 Você conseguiu! 🎉";
+
+
+        setTimeout(function () {
+
+            finalizarJogo();
+
+        }, 1000);
+
+    }
+
+}
+
+
+// ======================================
+// FINALIZAR JOGO
+// ======================================
+
+function finalizarJogo() {
+
+    faseAtual = 4;
+
+    atualizarProgresso();
+
+    telaFinal.classList.add(
+        "show"
+    );
+
+    iniciarConfetes();
+
+}
+
+
+// ======================================
+// FECHAR TELA FINAL
+// ======================================
+
+function closeFinal() {
+
+    telaFinal.classList.remove(
+        "show"
+    );
+
+}
+
+
+// ======================================
+// CONFETES
+// ======================================
+
+function iniciarConfetes() {
+
+    const canvas =
+        document.getElementById(
+            "confetti"
+        );
+
+
+    const ctx =
+        canvas.getContext(
+            "2d"
+        );
+
+
+    canvas.width =
+        window.innerWidth;
+
+
+    canvas.height =
+        window.innerHeight;
+
+
+    const confetes = [];
+
+
+    for (let i = 0; i < 150; i++) {
+
+        confetes.push({
+
+            x:
+                Math.random() *
+                canvas.width,
+
+            y:
+                Math.random() *
+                canvas.height -
+                canvas.height,
+
+            tamanho:
+                Math.random() *
+                8 + 4,
+
+            velocidade:
+                Math.random() *
+                4 + 2,
+
+            rotacao:
+                Math.random() *
+                360
+
+        });
+
+    }
+
+
+    function desenhar() {
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        confetes.forEach(
+            function (confete) {
+
+                ctx.save();
+
+
+                ctx.translate(
+                    confete.x,
+                    confete.y
+                );
+
+
+                ctx.rotate(
+                    confete.rotacao
+                );
+
+
+                ctx.fillStyle =
+                    "hsl(" +
+                    Math.random() *
+                    360 +
+                    ", 100%, 60%)";
+
+
+                ctx.fillRect(
+                    0,
+                    0,
+                    confete.tamanho,
+                    confete.tamanho
+                );
+
+
+                ctx.restore();
+
+
+                confete.y +=
+                    confete.velocidade;
+
+
+                confete.rotacao +=
+                    0.05;
+
+
+                if (
+                    confete.y >
+                    canvas.height
+                ) {
+
+                    confete.y = -10;
+
+                }
+
+            }
+        );
+
+
+        requestAnimationFrame(
+            desenhar
+        );
+
+    }
+
+
+    desenhar();
+
+}
+
+
+// ======================================
+// TECLA ESC
+// ======================================
+
+document.addEventListener(
+    "keydown",
+    function (evento) {
+
+        if (
+            evento.key === "Escape"
+        ) {
+
+            closeFinal();
+
+        }
+
+    }
+);
