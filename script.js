@@ -200,9 +200,6 @@ function coletarEstrela(estrela) {
         "/10";
 
 
-    tocarSom();
-
-
     if (estrelas === 10) {
 
         setTimeout(function () {
@@ -266,9 +263,6 @@ function popGameBalloon(balloon) {
         "/5";
 
 
-    tocarSom();
-
-
     if (baloes === 5) {
 
         setTimeout(function () {
@@ -317,9 +311,6 @@ function blowCandle() {
         "/3";
 
 
-    tocarSom();
-
-
     if (velas === 3) {
 
         document.getElementById(
@@ -353,8 +344,6 @@ function finalizarJogo() {
         "show"
     );
 
-    tocarSomVitoria();
-
     iniciarConfetes();
 
 }
@@ -368,161 +357,6 @@ function closeFinal() {
 
     telaFinal.classList.remove(
         "show"
-    );
-
-}
-
-
-// ======================================
-// SOM DOS CLIQUES
-// ======================================
-
-function tocarSom() {
-
-    const AudioContext =
-        window.AudioContext ||
-        window.webkitAudioContext;
-
-
-    if (!AudioContext) {
-
-        return;
-
-    }
-
-
-    const audio =
-        new AudioContext();
-
-
-    const oscilador =
-        audio.createOscillator();
-
-
-    const ganho =
-        audio.createGain();
-
-
-    oscilador.connect(
-        ganho
-    );
-
-    ganho.connect(
-        audio.destination
-    );
-
-
-    oscilador.frequency.value =
-        600;
-
-
-    ganho.gain.setValueAtTime(
-        0.1,
-        audio.currentTime
-    );
-
-
-    ganho.gain.exponentialRampToValueAtTime(
-        0.001,
-        audio.currentTime + 0.15
-    );
-
-
-    oscilador.start();
-
-
-    oscilador.stop(
-        audio.currentTime + 0.15
-    );
-
-}
-
-
-// ======================================
-// SOM DE VITÓRIA
-// ======================================
-
-function tocarSomVitoria() {
-
-    const AudioContext =
-        window.AudioContext ||
-        window.webkitAudioContext;
-
-
-    if (!AudioContext) {
-
-        return;
-
-    }
-
-
-    const audio =
-        new AudioContext();
-
-
-    const notas = [
-        523,
-        659,
-        784,
-        1046
-    ];
-
-
-    notas.forEach(
-        function (
-            frequencia,
-            indice
-        ) {
-
-            const oscilador =
-                audio.createOscillator();
-
-
-            const ganho =
-                audio.createGain();
-
-
-            oscilador.connect(
-                ganho
-            );
-
-
-            ganho.connect(
-                audio.destination
-            );
-
-
-            oscilador.frequency.value =
-                frequencia;
-
-
-            const inicio =
-                audio.currentTime +
-                indice * 0.15;
-
-
-            ganho.gain.setValueAtTime(
-                0.1,
-                inicio
-            );
-
-
-            ganho.gain.exponentialRampToValueAtTime(
-                0.001,
-                inicio + 0.3
-            );
-
-
-            oscilador.start(
-                inicio
-            );
-
-
-            oscilador.stop(
-                inicio + 0.3
-            );
-
-        }
     );
 
 }
@@ -666,7 +500,7 @@ function iniciarConfetes() {
 
 
 // ======================================
-// ESC FECHA A TELA FINAL
+// TECLA ESC FECHA A TELA FINAL
 // ======================================
 
 document.addEventListener(
